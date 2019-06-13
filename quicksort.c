@@ -13,11 +13,8 @@ int simple_pow(int b, int p) {
 
 void fill_arr(int *arr, int size) {
     int i;
-    printf("%d\n", arr);
-    printf("teste\n");
     for(i=0; i<size; i++) {
-        arr[i] = i;
-        printf("%d\n", i);
+        arr[i] = rand();
     }
 }
 
@@ -72,16 +69,19 @@ void print_arr(int *arr, int size) {
 void main() {
     srand(1); //same seed everytime for consistency on measurements.
     int *arr = malloc(ARR_SIZE * sizeof(int));
-    if(arr=NULL) {
+    if(arr==NULL) {
         printf("Malloc failed!\n");
         exit(1);
     }
-    printf("%d\n", NULL);
     fill_arr(arr, ARR_SIZE);
-    printf("t1\n");
     quicksort(arr, 0, ARR_SIZE);
-    printf("t1\n");
     print_arr(arr, ARR_SIZE);
+    if(is_ordered(arr, ARR_SIZE)) {
+        printf("arr is sorted\n");
+    } else {
+        printf("arr is not sorted\n");
+    }
+
 }
 
 
