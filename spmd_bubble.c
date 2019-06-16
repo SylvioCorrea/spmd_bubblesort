@@ -16,18 +16,20 @@ int my_rank; //Process id.
 int proc_n; //Total number of processes
 MPI_Status status;
 int *arr;
+int *proc_status;
 int iter = 0;
 
 void fill_reverse_arr() {
     int i;
     int first = (proc_n - my_rank) * ARR_SIZE;
-    for(i=0; i<size; i++) {
+    for(i=0; i<ARR_SIZE; i++) {
         arr[i] = first-i;
     }
 }
 
-void bubblesort(int *arr, int lo, int hi) {
+void bubblesort(int *arr, int size) {
     int i;
+    int temp;
     int ordered = 0;
     while(!ordered) {
         ordered = 1;
@@ -156,12 +158,12 @@ void main(int argc, char **argv) {
             //Partially sort received elements.
             bubblesort(partial_sort_ptr, EXCHANGE_N*2);
             //Send 2 biggest elements to neighbor to the right.
-            MPI_Send(exch_ptr; EXCHANGE_N, MPI_INT,
+            MPI_Send(exch_ptr, EXCHANGE_N, MPI_INT,
                      my_rank+1, 1, MPI_COMM_WORLD);
         }
         if(my_rank!=0) {
             //Receive those elements.
-            MPI_Recv(arr, EXCHANGE_N, MPI_INT, my_rank-1, 1, MPI_WORLD_COMM, &status);
+            MPI_Recv(arr, EXCHANGE_N, MPI_INT, my_rank-1, 1, MPI_COMM_WORLD, &status);
         }
     
     }
