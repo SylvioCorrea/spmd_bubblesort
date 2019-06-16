@@ -1,5 +1,5 @@
+ladcomp -env mpicc spmd_bubble300.c -o spmd_bubble300
+ladcomp -env mpicc spmd_bubble600.c -o spmd_bubble600
 ladcomp -env mpicc spmd_bubble1000.c -o spmd_bubble1000
+ladcomp -env mpicc spmd_bubble1500.c -o spmd_bubble1500
 ladcomp -env mpicc spmd_bubble2000.c -o spmd_bubble2000
-ladcomp -env mpicc spmd_bubble5000.c -o spmd_bubble5000
-ladcomp -env mpicc spmd_bubble10000.c -o spmd_bubble10000
-ladcomp -env mpicc spmd_bubble15000.c -o spmd_bubble15000
