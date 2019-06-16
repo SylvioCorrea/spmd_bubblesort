@@ -170,6 +170,9 @@ void main(int argc, char **argv) {
     
     }
     
+    printf("[%d]arr: ", my_rank);
+    print_arr(arr, ARR_SIZE);
+    
     free(arr);
     free(proc_status);
     
