@@ -140,7 +140,7 @@ void main(int argc, char **argv) {
             MPI_Recv(&comp_n, EXCHANGE_N, MPI_INT,
                      my_rank+1, 1, MPI_COMM_WORLD, &status);
             
-            if(arr[ARR_SIZE-1 > comp_n) {
+            if(arr[ARR_SIZE-1] > comp_n) {
                 //The last element of the array is greater than the
                 //smallest element of the neighbor process. Not done yet.
                 proc_status[my_rank] = 0;
