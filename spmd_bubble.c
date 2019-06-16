@@ -106,7 +106,7 @@ void main(int argc, char **argv) {
     
     if(my_rank == 0) {
         printf("Processes: %d\n", proc_n);
-        printf("Full array size: %d\n", proc_n*FULL_ARR_SIZE);
+        printf("Full array size: %d\n", FULL_ARR_SIZE);
         printf("Process array size: %d\n", arr_size);
         printf("Exchange chunk: %d\n", EXCHANGE_N);
     }
