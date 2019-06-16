@@ -7,8 +7,8 @@ o numero de iterações necessarias e tempo.
 #include <stdio.h>
 #include "mpi.h"
 
-#define EXCHANGE_N 10
-#define ARR_SIZE 80000
+#define EXCHANGE_N 100
+#define ARR_SIZE 10000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
@@ -103,6 +103,7 @@ void main(int argc, char **argv) {
         printf("SPMD bubblesort executing with %d processes.\n", proc_n);
         printf("Total array size: %d.\n", proc_n*ARR_SIZE);
         printf("Each process is sorting an array of size %d.\n", ARR_SIZE);
+        printf("Each process sends and receives %d elements to/from neighbor processes.\n", EXCHANGE_N);
     }
     
     printf("[%d]start.\n", my_rank);
