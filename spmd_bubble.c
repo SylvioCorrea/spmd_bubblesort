@@ -7,7 +7,7 @@ o numero de iterações necessarias e tempo.
 #include <stdio.h>
 #include "mpi.h"
 
-#define EXCHANGE_N 250
+#define EXCHANGE_N 500
 #define ARR_SIZE 5000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
@@ -87,12 +87,8 @@ void main(int argc, char **argv) {
     
     fill_reverse_arr();
     
-    //Teste
     //printf("[%d]arr: ", my_rank);
     //print_arr(arr, ARR_SIZE);
-    //MPI_Finalize();
-    //exit(0);
-    
     
     //Last process never checks when receiving from the right because this receive
     //never happens. It will always consider itself done and never do a partial
