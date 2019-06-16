@@ -9,11 +9,11 @@ o numero de iterações necessarias e tempo.
 
 /*
 full size 10016
-exchange tests: 100, 500, 1000, 2000, 4000, 5000.
+exchange tests: 500, 1000, 2000, 5000, 10000, 15000.
 */
 
-#define EXCHANGE_N 100
-#define FULL_ARR_SIZE 10016
+#define EXCHANGE_N 500
+#define FULL_ARR_SIZE 1001600
 
 
 int my_rank; //Process id.
