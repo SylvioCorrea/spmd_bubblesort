@@ -83,11 +83,11 @@ void main(int argc, char **argv) {
     
     fill_reverse_arr();
     
-    //TODO
-    printf("[%d]arr: ", my_rank);
-    print_arr(arr, ARR_SIZE);
-    MPI_Finalize();
-    exit(0);
+    //Teste
+    //printf("[%d]arr: ", my_rank);
+    //print_arr(arr, ARR_SIZE);
+    //MPI_Finalize();
+    //exit(0);
     
     
     //Last process never checks when receiving from the right because this receive
@@ -99,6 +99,8 @@ void main(int argc, char **argv) {
         printf("SPMD bubblesort executing with %d processes.\n", proc_n);
         printf("Total array size: %d.\n", proc_n*ARR_SIZE);
     }
+    
+    printf("[%d]start.\n", my_rank);
     
     //Location of the array from which elements will be received
     //from the neighbor process to the right.
