@@ -71,12 +71,12 @@ void main(int argc, char **argv) {
     //Array that stores state for each process.
     //int *proc_status;
     
-    if(proc_status = malloc(proc_n*sizeof(int)) == NULL) {
+    if((proc_status = malloc(proc_n*sizeof(int))) == NULL) {
         printf("[%d]malloc failed.\n", my_rank);
         exit(1);
     }
     
-    if(arr = malloc(ARR_EXT_SIZE*sizeof(int))==NULL) {
+    if((arr = malloc(ARR_EXT_SIZE*sizeof(int)))==NULL) {
         printf("[%d]malloc failed.\n", my_rank);
         exit(1);
     }
