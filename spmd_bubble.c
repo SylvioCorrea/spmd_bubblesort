@@ -109,7 +109,7 @@ void main(int argc, char **argv) {
         printf("Full array size: %d\n", FULL_ARR_SIZE);
         printf("Process array size: %d\n", arr_size);
         printf("Exchange chunk: %d\n", EXCHANGE_N);
-        printf("Exchange to process array size ratio: %.2f \%",
+        printf("Exchange/process %: %.2f",
                ((double)EXCHANGE_N)/((double)arr_size))*100;
     }
     
