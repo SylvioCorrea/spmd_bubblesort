@@ -8,7 +8,7 @@ o numero de iterações necessarias e tempo.
 #include "mpi.h"
 
 #define EXCHANGE_N 10
-#define ARR_SIZE 100000
+#define ARR_SIZE 80000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
@@ -177,8 +177,6 @@ void main(int argc, char **argv) {
     
     }
     
-    double t2 = MPI_Wtime();
-    
     /*
     //Assemble the full array joining the pieces of each process.
     if(my_rank==0) {
@@ -199,13 +197,14 @@ void main(int argc, char **argv) {
     }
     */
     
+    double t2 = MPI_Wtime();
     if(my_rank==0) {
         printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d\n",
                t2-t1, iter);
     }
     
-    printf("[%d]arr: ", my_rank);
-    print_arr(arr, ARR_SIZE);
+    //printf("[%d]arr: ", my_rank);
+    //print_arr(arr, ARR_SIZE);
     
     free(arr);
     free(proc_status);
