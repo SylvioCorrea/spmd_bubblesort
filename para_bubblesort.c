@@ -16,19 +16,15 @@ o numero de iterações necessarias e tempo.
 
 int my_rank; //Process id.
 int proc_n; //Total number of processes
+MPI_Status status;
+int *arr;
+int iter = 0;
 
-
-int simple_pow(int b, int p) {
+void fill_reverse_arr() {
     int i;
-    int res = 1;
-    for(i=0; i<p; i++, res*=b) {}
-    return res;
-}
-
-void fill_reverse_arr(int *arr, int last, int size) {
-    int i;
+    int first = (proc_n - my_rank) * ARR_SIZE;
     for(i=0; i<size; i++) {
-        arr[i] = last-i;
+        arr[i] = first-i;
     }
 }
 
@@ -66,91 +62,116 @@ void print_arr(int *arr, int size) {
 }
 
 void main() {
-    MPI_Status status;
+    
     MPI_Init(&argc , &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &proc_n);
     
     int i;
-    
-    //Array o be sorted.
-    int *arr;
     //Array that stores state for each process.
     //int *proc_status;
     
-    int proc_status = 0;
+    if(proc_status = malloc(proc_n*sizeof(int)) == NULL) {
+        printf("[%d]malloc failed.\n", my_rank);
+        exit(1);
+    }
     
     if(arr = malloc(ARR_EXT_SIZE*sizeof(int))==NULL) {
-        printf("malloc failed.\n");
+        printf("[%d]malloc failed.\n", my_rank);
         exit(1);
     }
     
-    fill_reverse_arr(arr, my_rank, ARR_SIZE);
-    /*
-    if(proc_status = malloc(proc_n*sizeof(int))==NULL) {
-        printf("malloc failed.\n");
-        exit(1);
-    }*/
+    fill_reverse_arr();
     
-    for(i=0; i<proc_n; i++) {
-        proc_status[i] = 0;
-    }
+    //TODO
+    printf("[%d]arr: ", my_rank);
+    print_arr(arr, ARR_SIZE);
+    MPI_Finalize();
+    exit(0);
+    
+    
+    //Last process never checks when receiving from the right because this receive
+    //never happens. It will always consider itself done and never do a partial
+    //sort, only full ones.
+    proc_status[proc_n-1] = 1;
     
     if(my_rank == 0) {
-        printf("Executing with %d processes.\n", proc_n);
-        printf("Array size: %d.\n", ARR_SIZE);
+        printf("SPMD bubblesort executing with %d processes.\n", proc_n);
+        printf("Total array size: %d.\n", proc_n*ARR_SIZE);
     }
     
-    //Location of the array from which elements will be sent
-    //to the neighbor process.
+    //Location of the array from which elements will be received
+    //from the neighbor process to the right.
     int *exch_ptr = &arr[ARR_SIZE];
     //Location of the array from which elements will be
-    //sorted before the second exchange
+    //partially sorted before the second exchange
     int *partial_sort_ptr = &arr[ARR_SIZE - EXCHANGE_N];
     int done = 0;
-    //===================Main loop========================
-    while(!done) {
-        done = 1;
-        
+    
+    //===================Sorting loop========================
+    while(1) {
+        iter++;
         bubblesort(arr, ARR_SIZE);
         
         if(my_rank!=0) {
+            //Send the smallest elements of the array to the
+            //process to the left.
             MPI_Send(arr, EXCHANGE_N, MPI_INT,
                      my_rank-1, 1, MPI_COMM_WORLD);
-                     
-            MPI_Recv(arr, EXCHANGE_N, MPI_INT,
-                     my_rank-1, 1, MPI_COMM_WORLD, &status);
-                     
-            //TODO
         }
+        
         if(my_rank!=proc_n-1) {
+            //Receive the smallest elements of the process to
+            //the right
             MPI_Recv(exch_ptr, EXCHANGE_N, MPI_INT,
                      my_rank+1, 1, MPI_COMM_WORLD, &status);
-        
+            
             if(arr[ARR_SIZE-1]>arr[ARR_SIZE]) {
                 //The last element of the array is greater than the
-                //smallest element of the neighbor process. Partially sort.
-                bubblesort(partial_sort_ptr, EXCHANGE_N*2);
-                
-                //Send 2 biggest elements to neighbor.
-                MPI_Send(exch_ptr; EXCHANGE_N, MPI_INT,
-                         my_rank+1, 1, MPI_COMM_WORLD)
-                
-                //Store status as not done yet.
+                //smallest element of the neighbor process. Not done yet.
                 proc_status[my_rank] = 0;
+            } else {
+                //Nothing to change.
+                proc_status[my_rank] = 1;
             }
         }
         
+        
+        
         //Broadcast status.
+        done = 1;
         for(i=0; i<proc_n; i++) {
-            MPI_Brd
+            MPI_Bcast(&proc_status[i], 1, MPI_INT, i, MPI_COMM_WORLD);
+            if(proc_status[i]==0) {
+                //Some process found unsorted elements.
+                done = 0;
+                break;
+            }
         }
+        
+        //Check if everything is sorted.
+        if(done == 1) {
+            break;
+        }
+        //If not:    
+        if(my_rank!=proc_n-1) {
+            //Partially sort received elements.
+            bubblesort(partial_sort_ptr, EXCHANGE_N*2);
+            //Send 2 biggest elements to neighbor to the right.
+            MPI_Send(exch_ptr; EXCHANGE_N, MPI_INT,
+                     my_rank+1, 1, MPI_COMM_WORLD);
+        }
+        if(my_rank!=0) {
+            //Receive those elements.
+            MPI_Recv(arr, EXCHANGE_N, MPI_INT, my_rank-1, 1, MPI_WORLD_COMM, &status);
+        }
+    
     }
-    
-    
     
     free(arr);
     free(proc_status);
+    
+    MPI_Finalize();
 }
 
 
