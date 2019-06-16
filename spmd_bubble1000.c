@@ -13,7 +13,7 @@ exchange tests: 500, 1000, 2000, 5000, 10000, 15000.
 */
 
 #define EXCHANGE_N 1000
-#define FULL_ARR_SIZE 1001600
+#define FULL_ARR_SIZE 100160
 
 
 int my_rank; //Process id.
