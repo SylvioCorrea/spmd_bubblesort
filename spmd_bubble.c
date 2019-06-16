@@ -27,20 +27,24 @@ void fill_reverse_arr() {
     }
 }
 
+//Optimized version where every pass reduces the number
+//of comparisons by 1.
 void bubblesort(int *arr, int size) {
     int i;
     int temp;
+    int comp_length = size;
     int ordered = 0;
     while(!ordered) {
         ordered = 1;
-        for(i=0; i<size-1; i++) {
+        for(i=0; i<comp_length-1; i++) {
             if(arr[i]>arr[i+1]) {
                 temp = arr[i];
                 arr[i] = arr[i+1];
                 arr[i+1] = temp;
                 ordered = 0;
             }
-        } 
+        }
+        comp_length--; 
     }
 }
 
@@ -176,6 +180,14 @@ void main(int argc, char **argv) {
     double t2 = MPI_Wtime();
     
     if(my_rank==0) {
+        int *full_arr = malloc(proc_n * ARR_SIZE * sizeof(int));
+        for(i=0; i<ARR_SIZE; i++) {
+            full_arr[i] = arr[i];
+        }
+        for(i=1; i<proc_n; i++) {
+            MPI_Send()
+        }
+        
         printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d\n",
                t2-t1, iter);
     }
