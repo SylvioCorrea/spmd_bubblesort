@@ -8,7 +8,7 @@ o numero de iterações necessarias e tempo.
 #include "mpi.h"
 
 #define EXCHANGE_N 10
-#define ARR_SIZE 640000
+#define ARR_SIZE 10000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
