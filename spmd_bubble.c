@@ -5,9 +5,7 @@ o numero de iterações necessarias e tempo.
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "mpi.h"
-#include "mmulti.h"
 
 #define EXCHANGE_N 2
 #define ARR_SIZE 10
