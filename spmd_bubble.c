@@ -7,8 +7,12 @@ o numero de iterações necessarias e tempo.
 #include <stdio.h>
 #include "mpi.h"
 
-#define EXCHANGE_N 50
-#define ARR_SIZE 5000
+/*
+10016
+*/
+
+#define EXCHANGE_N 3
+#define ARR_SIZE 10
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
@@ -110,7 +114,11 @@ void main(int argc, char **argv) {
     //Location of the array from which elements will be
     //partially sorted before the second exchange
     int *partial_sort_ptr = &arr[ARR_SIZE - EXCHANGE_N];
+    
     int done = 0;
+    
+    //Stores the smallest element sent by the process to the right.
+    int comp_n;
     
     double t1 = MPI_Wtime();
     
@@ -120,19 +128,19 @@ void main(int argc, char **argv) {
         bubblesort(arr, ARR_SIZE);
         
         if(my_rank!=0) {
-            //Send the smallest elements of the array to the
+            //Send the smallest element of the array to the
             //process to the left.
-            MPI_Send(arr, EXCHANGE_N, MPI_INT,
+            MPI_Send(arr, 1, MPI_INT,
                      my_rank-1, 1, MPI_COMM_WORLD);
         }
         
         if(my_rank!=proc_n-1) {
             //Receive the smallest elements of the process to
             //the right
-            MPI_Recv(exch_ptr, EXCHANGE_N, MPI_INT,
+            MPI_Recv(&comp_n, EXCHANGE_N, MPI_INT,
                      my_rank+1, 1, MPI_COMM_WORLD, &status);
             
-            if(arr[ARR_SIZE-1]>arr[ARR_SIZE]) {
+            if(arr[ARR_SIZE-1 > comp_n) {
                 //The last element of the array is greater than the
                 //smallest element of the neighbor process. Not done yet.
                 proc_status[my_rank] = 0;
@@ -141,8 +149,6 @@ void main(int argc, char **argv) {
                 proc_status[my_rank] = 1;
             }
         }
-        
-        
         
         //Broadcast status.
         done = 1;
@@ -159,14 +165,23 @@ void main(int argc, char **argv) {
         if(done == 1) {
             break;
         }
-        //If not:    
+        //If not:
+        if(my_rank!=0) {
+            //Send smallest elements to the process to the the left.
+            MPI_Send(arr, EXCHANGE_N, MPI_INT, my_rank-1, 1, MPI_COMM_WORLD);
+        }  
         if(my_rank!=proc_n-1) {
+            //Receive a chunk with the smallest elements from the
+            //process to the right.
+            MPI_Recv(exch_ptr, EXCHANGE_N, MPI_INT,
+                     my_rank+1, 1, MPI_COMM_WORLD, &status);
             //Partially sort received elements.
             bubblesort(partial_sort_ptr, EXCHANGE_N*2);
-            //Send 2 biggest elements to neighbor to the right.
+            //Return same amount of the biggest elements to neighbor to the right.
             MPI_Send(exch_ptr, EXCHANGE_N, MPI_INT,
                      my_rank+1, 1, MPI_COMM_WORLD);
         }
+        
         if(my_rank!=0) {
             //Receive those elements.
             MPI_Recv(arr, EXCHANGE_N, MPI_INT, my_rank-1, 1, MPI_COMM_WORLD, &status);
@@ -174,48 +189,17 @@ void main(int argc, char **argv) {
     
     }
     
-    /*
-    //Assemble the full array joining the pieces of each process.
-    if(my_rank==0) {
-        int *full_arr = malloc(proc_n * ARR_SIZE * sizeof(int));
-        for(i=0; i<ARR_SIZE; i++) {
-            full_arr[i] = arr[i];
-        }
-        for(i=1; i<proc_n; i++) {
-            MPI_Recv(&full_arr[ARR_SIZE*i], ARR_SIZE, MPI_INT,
-                     i, 1, MPI_COMM_WORLD, &status);
-        }
-        
-        printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d\n",
-               t2-t1, iter);
-    } else {
-        //Send sorted array to the first process.
-        MPI_Send(arr, ARR_SIZE, MPI_INT, 0, 1, MPI_COMM_WORLD);
-    }
-    */
-    
     double t2 = MPI_Wtime();
     if(my_rank==0) {
-        printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d\n",
+        printf("\nTime: %.2f\nIterations: %d\n",
                t2-t1, iter);
     }
     
-    //printf("[%d]arr: ", my_rank);
-    //print_arr(arr, ARR_SIZE);
+    printf("[%d]arr: ", my_rank);
+    print_arr(arr, ARR_SIZE);
     
     free(arr);
     free(proc_status);
     
     MPI_Finalize();
 }
-
-
-
-
-
-
-
-
-
-
-
