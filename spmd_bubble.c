@@ -204,8 +204,8 @@ void main(int argc, char **argv) {
                t2-t1, iter);
     }
     
-    //printf("[%d]arr: ", my_rank);
-    //print_arr(arr, ARR_SIZE);
+    printf("[%d]arr: ", my_rank);
+    print_arr(arr, ARR_SIZE);
     
     free(arr);
     free(proc_status);
