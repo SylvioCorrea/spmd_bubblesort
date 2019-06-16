@@ -110,7 +110,7 @@ void main(int argc, char **argv) {
         printf("Process array size: %d\n", arr_size);
         printf("Exchange chunk: %d\n", EXCHANGE_N);
         printf("Exchange/process %%: %.2f",
-               ((double)EXCHANGE_N)/((double)arr_size))*100;
+               ((double)EXCHANGE_N)/((double)arr_size)*100);
     }
     
     //printf("[%d]start.\n", my_rank);
