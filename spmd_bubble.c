@@ -8,7 +8,7 @@ o numero de iterações necessarias e tempo.
 #include "mpi.h"
 
 #define EXCHANGE_N 10
-#define ARR_SIZE 100000
+#define ARR_SIZE 640000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
@@ -110,6 +110,8 @@ void main(int argc, char **argv) {
     int *partial_sort_ptr = &arr[ARR_SIZE - EXCHANGE_N];
     int done = 0;
     
+    double t1 = MPI_Wtime();
+    
     //===================Sorting loop========================
     while(1) {
         iter++;
@@ -170,8 +172,15 @@ void main(int argc, char **argv) {
     
     }
     
-    printf("[%d]arr: ", my_rank);
-    print_arr(arr, ARR_SIZE);
+    double t2 = MPI_Wtime();
+    
+    if(my_rank==0) {
+        printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d",
+               t2-t1, iter);
+    }
+    
+    //printf("[%d]arr: ", my_rank);
+    //print_arr(arr, ARR_SIZE);
     
     free(arr);
     free(proc_status);
