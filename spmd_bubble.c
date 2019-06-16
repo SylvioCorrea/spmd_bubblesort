@@ -8,25 +8,26 @@ o numero de iterações necessarias e tempo.
 #include "mpi.h"
 
 /*
-10016
+full size 10016
+exchange tests: 100, 500, 1000, 2000, 4000, 5000.
 */
 
-#define EXCHANGE_N 3
-#define ARR_SIZE 10
-#define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
+#define EXCHANGE_N 100
+#define FULL_ARR_SIZE 10016
 
 
 int my_rank; //Process id.
 int proc_n; //Total number of processes
 MPI_Status status;
 int *arr;
+int arr_size;
 int *proc_status;
 int iter = 0;
 
-void fill_reverse_arr() {
+void fill_reverse_arr(int size) {
     int i;
-    int first = (proc_n - my_rank) * ARR_SIZE;
-    for(i=0; i<ARR_SIZE; i++) {
+    int first = (proc_n - my_rank) * size;
+    for(i=0; i<size; i++) {
         arr[i] = first-i;
     }
 }
@@ -79,20 +80,23 @@ void main(int argc, char **argv) {
     //Array that stores state for each process.
     //int *proc_status;
     
+    arr_size = FULL_ARR_SIZE/proc_n;
+    arr_ext_size = arr_size+EXCHANGE_N;
+    
     if((proc_status = malloc(proc_n*sizeof(int))) == NULL) {
         printf("[%d]malloc failed.\n", my_rank);
         exit(1);
     }
     
-    if((arr = malloc(ARR_EXT_SIZE*sizeof(int)))==NULL) {
+    if((arr = malloc(arr_ext_size*sizeof(int)))==NULL) {
         printf("[%d]malloc failed.\n", my_rank);
         exit(1);
     }
     
-    fill_reverse_arr();
+    fill_reverse_arr(arr_size);
     
     //printf("[%d]arr: ", my_rank);
-    //print_arr(arr, ARR_SIZE);
+    //print_arr(arr, arr_size);
     
     //Last process never checks when receiving from the right because this receive
     //never happens. It will always consider itself done and never do a partial
@@ -100,20 +104,20 @@ void main(int argc, char **argv) {
     proc_status[proc_n-1] = 1;
     
     if(my_rank == 0) {
-        printf("SPMD bubblesort executing with %d processes.\n", proc_n);
-        printf("Total array size: %d.\n", proc_n*ARR_SIZE);
-        printf("Each process is sorting an array of size %d.\n", ARR_SIZE);
-        printf("Each process sends and receives %d elements to/from neighbor processes.\n", EXCHANGE_N);
+        printf("Processes: %d\n", proc_n);
+        printf("Full array size: %d\n", proc_n*FULL_ARR_SIZE);
+        printf("Process array size: %d\n", arr_size);
+        printf("Exchange chunk: %d\n", EXCHANGE_N);
     }
     
     //printf("[%d]start.\n", my_rank);
     
     //Location of the array from which elements will be received
     //from the neighbor process to the right.
-    int *exch_ptr = &arr[ARR_SIZE];
+    int *exch_ptr = &arr[arr_size];
     //Location of the array from which elements will be
     //partially sorted before the second exchange
-    int *partial_sort_ptr = &arr[ARR_SIZE - EXCHANGE_N];
+    int *partial_sort_ptr = &arr[arr_size - EXCHANGE_N];
     
     int done = 0;
     
@@ -125,7 +129,7 @@ void main(int argc, char **argv) {
     //===================Sorting loop========================
     while(1) {
         iter++;
-        bubblesort(arr, ARR_SIZE);
+        bubblesort(arr, arr_size);
         
         if(my_rank!=0) {
             //Send the smallest element of the array to the
@@ -140,7 +144,7 @@ void main(int argc, char **argv) {
             MPI_Recv(&comp_n, EXCHANGE_N, MPI_INT,
                      my_rank+1, 1, MPI_COMM_WORLD, &status);
             
-            if(arr[ARR_SIZE-1] > comp_n) {
+            if(arr[arr_size-1] > comp_n) {
                 //The last element of the array is greater than the
                 //smallest element of the neighbor process. Not done yet.
                 proc_status[my_rank] = 0;
@@ -195,8 +199,8 @@ void main(int argc, char **argv) {
                t2-t1, iter);
     }
     
-    printf("[%d]arr: ", my_rank);
-    print_arr(arr, ARR_SIZE);
+    //printf("[%d]arr: ", my_rank);
+    //print_arr(arr, arr_size);
     
     free(arr);
     free(proc_status);
