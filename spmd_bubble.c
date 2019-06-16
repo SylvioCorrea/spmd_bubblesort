@@ -21,6 +21,7 @@ int proc_n; //Total number of processes
 MPI_Status status;
 int *arr;
 int arr_size;
+int arr_ext_size;
 int *proc_status;
 int iter = 0;
 
