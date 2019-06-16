@@ -179,21 +179,33 @@ void main(int argc, char **argv) {
     
     double t2 = MPI_Wtime();
     
+    /*
+    //Assemble the full array joining the pieces of each process.
     if(my_rank==0) {
         int *full_arr = malloc(proc_n * ARR_SIZE * sizeof(int));
         for(i=0; i<ARR_SIZE; i++) {
             full_arr[i] = arr[i];
         }
         for(i=1; i<proc_n; i++) {
-            MPI_Send()
+            MPI_Recv(&full_arr[ARR_SIZE*i], ARR_SIZE, MPI_INT,
+                     i, 1, MPI_COMM_WORLD, &status);
         }
         
         printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d\n",
                t2-t1, iter);
+    } else {
+        //Send sorted array to the first process.
+        MPI_Send(arr, ARR_SIZE, MPI_INT, 0, 1, MPI_COMM_WORLD);
+    }
+    */
+    
+    if(my_rank==0) {
+        printf("Sorting done.\nTime taken: %.2f\nNumber of iterations needed: %d\n",
+               t2-t1, iter);
     }
     
-    //printf("[%d]arr: ", my_rank);
-    //print_arr(arr, ARR_SIZE);
+    printf("[%d]arr: ", my_rank);
+    print_arr(arr, ARR_SIZE);
     
     free(arr);
     free(proc_status);
