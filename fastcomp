@@ -1,0 +1,1 @@
+ladcomp -env mpicc spmd_bubble.c -o spmd_bubble
