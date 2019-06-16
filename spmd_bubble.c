@@ -8,7 +8,7 @@ o numero de iterações necessarias e tempo.
 #include "mpi.h"
 
 #define EXCHANGE_N 10
-#define ARR_SIZE 1000
+#define ARR_SIZE 5000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
@@ -204,8 +204,8 @@ void main(int argc, char **argv) {
                t2-t1, iter);
     }
     
-    printf("[%d]arr: ", my_rank);
-    print_arr(arr, ARR_SIZE);
+    //printf("[%d]arr: ", my_rank);
+    //print_arr(arr, ARR_SIZE);
     
     free(arr);
     free(proc_status);
