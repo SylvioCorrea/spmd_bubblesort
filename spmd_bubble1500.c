@@ -12,7 +12,7 @@ full size 10016
 exchange tests: 500, 1000, 2000, 5000, 10000, 15000.
 */
 
-#define EXCHANGE_N 10000
+#define EXCHANGE_N 1500
 #define FULL_ARR_SIZE 100160
 
 
