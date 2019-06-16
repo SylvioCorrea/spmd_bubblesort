@@ -7,8 +7,8 @@ o numero de iterações necessarias e tempo.
 #include <stdio.h>
 #include "mpi.h"
 
-#define EXCHANGE_N 100
-#define ARR_SIZE 10000
+#define EXCHANGE_N 50
+#define ARR_SIZE 5000
 #define ARR_EXT_SIZE (ARR_SIZE + EXCHANGE_N)
 
 
@@ -106,7 +106,7 @@ void main(int argc, char **argv) {
         printf("Each process sends and receives %d elements to/from neighbor processes.\n", EXCHANGE_N);
     }
     
-    printf("[%d]start.\n", my_rank);
+    //printf("[%d]start.\n", my_rank);
     
     //Location of the array from which elements will be received
     //from the neighbor process to the right.
