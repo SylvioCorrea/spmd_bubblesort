@@ -7,13 +7,8 @@ o numero de iterações necessarias e tempo.
 #include <stdio.h>
 #include "mpi.h"
 
-/*
-full size 10016
-exchange tests: 500, 1000, 2000, 5000, 10000, 15000.
-*/
-
-#define EXCHANGE_N 150
-#define FULL_ARR_SIZE 100160
+#define EXCHANGE_N 6
+#define FULL_ARR_SIZE 80
 
 
 int my_rank; //Process id.
@@ -83,6 +78,15 @@ void main(int argc, char **argv) {
     
     arr_size = FULL_ARR_SIZE/proc_n;
     arr_ext_size = arr_size+EXCHANGE_N;
+    
+    if(((double)EXCHANGE_N)/arr_size > 0.5) {
+        if(my_rank==0) {
+            printf("Error: exchange size cannot be higher than 50%% the size of a process array\n");
+            printf("Process array size: %d\n", arr_size);
+            printf("Exchange size: %d\n", EXCHANGE_N);
+        }
+        exit(1);
+    }
     
     if((proc_status = malloc(proc_n*sizeof(int))) == NULL) {
         printf("[%d]malloc failed.\n", my_rank);
@@ -202,8 +206,8 @@ void main(int argc, char **argv) {
                t2-t1, iter);
     }
     
-    //printf("[%d]arr: ", my_rank);
-    //print_arr(arr, arr_size);
+    printf("[%d]arr: ", my_rank);
+    print_arr(arr, arr_size);
     
     free(arr);
     free(proc_status);
